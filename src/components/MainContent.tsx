@@ -1,5 +1,6 @@
 import type { FC } from "react"
 import { useEffect, useState } from "react"
+import { brand } from "../config/brand"
 import SignInForm, { type SignInValues } from "./SignInForm"
 import SignUpForm, { type SignUpValues } from "./SignUpForm"
 
@@ -24,11 +25,11 @@ const MainContent: FC<MainContentProps> = ({ isSignedIn, onSignIn, onSignUp, onS
   return (
     <main className="app-main">
       <div className="container main-inner">
-        <h1 className="headline">Welcome to Galani</h1>
+        <h1 className="headline">Welcome to {brand.name}</h1>
         <p className="subcopy">
           {isSignedIn
-            ? "Explore your personalized dashboard and jump back into what matters most."
-            : "Sign in to access your Galani workspace or create an account to get started."}
+            ? `Explore your personalized ${brand.name} dashboard and jump back into what matters most.`
+            : `Sign in to access your ${brand.name} workspace or create an account to get started.`}
         </p>
 
         {isSignedIn ? (

@@ -1,5 +1,5 @@
 import type { FC } from "react"
-import logo from "/vite.svg"
+import { brand } from "../config/brand"
 
 type HeaderProps = {
   isSignedIn: boolean
@@ -29,8 +29,8 @@ const Header: FC<HeaderProps> = ({ isSignedIn }) => {
     <header className="site-header">
       <div className="container header-inner">
         <div className="brand">
-          <img src={logo} alt="Galani logo" className="brand-logo" />
-          <span className="brand-name">Galani</span>
+          <img src={brand.logoSrc} alt={`${brand.name} logo`} className="brand-logo" />
+          <span className="brand-name">{brand.name}</span>
         </div>
         <nav className="primary-nav" aria-label="Primary">
           {links.map(({ href, label, isPrimary }) => (
