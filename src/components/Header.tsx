@@ -22,8 +22,6 @@ const memberLinks: NavLink[] = [
   { href: "#zxy", label: "Zxy" },
 ]
 
-const logoPath = "/galani.jpg";
-
 const Header: FC<HeaderProps> = ({ isSignedIn }) => {
   const links = isSignedIn ? memberLinks : guestLinks
 
@@ -31,7 +29,7 @@ const Header: FC<HeaderProps> = ({ isSignedIn }) => {
     <header className="site-header">
       <div className="container header-inner">
         <div className="brand">
-          <img src={logoPath} alt="Galani logo" className="brand-logo" />
+          <img src={logo} alt="Galani logo" className="brand-logo" />
           <span className="brand-name">Galani</span>
         </div>
         <nav className="primary-nav" aria-label="Primary">
