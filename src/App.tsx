@@ -116,8 +116,6 @@ function App() {
           element={
             <ProtectedRoute isSignedIn={isSignedIn}>
               <HomePage
-                faturas={faturas}
-                onSelectFatura={handleSelectFatura}
                 onAddClient={handleCreateClient}
                 onAddFatura={handleCreateFatura}
               />
