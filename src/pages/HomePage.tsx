@@ -5,11 +5,11 @@ import { formatDate } from "../data/sampleData"
 type HomePageProps = {
   faturas: Fatura[]
   onSelectFatura: (fatura: Fatura) => void
-  onGoToClients: () => void
-  onGoToFaturas: () => void
+  onAddClient: () => void
+  onAddFatura: () => void
 }
 
-const HomePage: FC<HomePageProps> = ({ faturas, onSelectFatura, onGoToClients, onGoToFaturas }) => {
+const HomePage: FC<HomePageProps> = ({ faturas, onSelectFatura, onAddClient, onAddFatura }) => {
   const upcomingInvoices = [...faturas]
     .filter((fatura) => !fatura.paid)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
@@ -19,15 +19,15 @@ const HomePage: FC<HomePageProps> = ({ faturas, onSelectFatura, onGoToClients, o
     <div className="placeholder-card">
       <h2>Mire se erdhe serish!</h2>
       <p>
-        Zgjidh "Klientet" per te punuar me klientet, "Faturat" per te pare listen e plote, ose perzgjidh nje fature
-        me poshte per te pare detajet shpejt.
+        Perdorni butonat me poshte per te shtuar nje klient te ri ose nje fature te re. Me poshte keni faturat qe
+        kane nevoje per vemendje te shpejte.
       </p>
       <div className="placeholder-actions">
-        <button type="button" className="secondary-action" onClick={onGoToClients}>
-          Shiko klientet
+        <button type="button" className="secondary-action" onClick={onAddClient}>
+          Shto klient
         </button>
-        <button type="button" className="secondary-action" onClick={onGoToFaturas}>
-          Hap faturat
+        <button type="button" className="secondary-action" onClick={onAddFatura}>
+          Shto fature
         </button>
       </div>
       {upcomingInvoices.length > 0 ? (

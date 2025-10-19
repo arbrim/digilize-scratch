@@ -5,8 +5,10 @@ import ProtectedRoute from "./components/ProtectedRoute"
 import AuthPage from "./pages/AuthPage"
 import ClientsPage from "./pages/ClientsPage"
 import ClientDetailsPage from "./pages/ClientDetailsPage"
+import ClientCreatePage from "./pages/ClientCreatePage"
 import FaturaPage from "./pages/FaturaPage"
 import FaturaDetailPage from "./pages/FaturaDetailPage"
+import FaturaCreatePage from "./pages/FaturaCreatePage"
 import HomePage from "./pages/HomePage"
 import UsersPage from "./pages/UsersPage"
 import type { SignInValues } from "./components/SignInForm"
@@ -98,6 +100,14 @@ function App() {
     navigate(`/clients/${clientId}`)
   }
 
+  const handleCreateClient = () => {
+    navigate("/clients/new")
+  }
+
+  const handleCreateFatura = () => {
+    navigate("/fatura/new")
+  }
+
   return (
     <Routes>
       <Route element={<AppLayout isSignedIn={isSignedIn} onSignOut={handleSignOut} />}>
@@ -108,8 +118,8 @@ function App() {
               <HomePage
                 faturas={faturas}
                 onSelectFatura={handleSelectFatura}
-                onGoToClients={() => navigate("/clients")}
-                onGoToFaturas={() => navigate("/fatura")}
+                onAddClient={handleCreateClient}
+                onAddFatura={handleCreateFatura}
               />
             </ProtectedRoute>
           }
@@ -119,6 +129,14 @@ function App() {
           element={
             <ProtectedRoute isSignedIn={isSignedIn}>
               <ClientsPage clients={clients} onSelectClient={handleSelectClient} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clients/new"
+          element={
+            <ProtectedRoute isSignedIn={isSignedIn}>
+              <ClientCreatePage />
             </ProtectedRoute>
           }
         />
@@ -135,6 +153,14 @@ function App() {
           element={
             <ProtectedRoute isSignedIn={isSignedIn}>
               <FaturaPage faturas={faturas} clients={clients} onSelectFatura={handleSelectFatura} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/fatura/new"
+          element={
+            <ProtectedRoute isSignedIn={isSignedIn}>
+              <FaturaCreatePage clients={clients} onBackToList={() => navigate("/fatura")} />
             </ProtectedRoute>
           }
         />
