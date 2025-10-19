@@ -742,6 +742,114 @@
   width: auto;
 }
 
+@media (max-width: 640px) {
+  .form-table-scroll {
+    overflow-x: visible;
+  }
+
+  .form-input-table {
+    min-width: 0;
+  }
+
+  .form-input-table thead {
+    display: none;
+  }
+
+  .form-input-table tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-input-table tbody tr {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  }
+
+  .form-input-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.25rem;
+    border-bottom: none;
+    padding: 0.45rem 0;
+  }
+
+  .form-input-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .form-input-table td input,
+  .form-input-table td select {
+    flex: 1;
+    min-width: 0;
+    padding: 0.6rem 0.7rem;
+  }
+
+  .form-input-table td:last-child {
+    justify-content: flex-end;
+  }
+
+  .form-input-table tfoot td {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0;
+  }
+
+  .form-input-table tfoot td::before {
+    content: none;
+  }
+
+  .form-input-table tfoot {
+    display: block;
+    margin-top: 0.75rem;
+  }
+
+  .form-input-table tfoot tr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-radius: 0.9rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+
+  .form-input-table tfoot th {
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.85rem;
+  }
+
+  .table-inline-actions {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-inline-actions .secondary-action {
+    width: 100%;
+  }
+
+  .table-action-button {
+    width: 100%;
+  }
+
+  .form-group-table {
+    gap: 0.75rem;
+  }
+}
+
 .table-row-clickable {
   cursor: pointer;
   transition: background 0.15s ease, box-shadow 0.15s ease;

@@ -293,7 +293,7 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
                         <td data-label="Totali">
                           <span className="table-total-value">{formatCurrency(lineTotal)}</span>
                         </td>
-                        <td className="table-cell-actions">
+                        <td data-label="Veprime" className="table-cell-actions">
                           <button
                             type="button"
                             className="table-action-button"
