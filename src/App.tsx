@@ -1,31 +1,83 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Footer from "./components/Footer"
 import Header from "./components/Header"
 import MainContent from "./components/MainContent"
 import type { SignInValues } from "./components/SignInForm"
 import type { SignUpValues } from "./components/SignUpForm"
+import {
+  clearSession,
+  isSessionValid,
+  loadSession,
+  signInRequest,
+  signUpRequest,
+  type AuthSession,
+} from "./services/auth"
 import "./App.css"
 
-function App() {
-  const [isSignedIn, setIsSignedIn] = useState(false)
+type AuthStatus = "idle" | "submitting"
 
-  const handleSignIn = (_values: SignInValues) => {
-    setIsSignedIn(true)
+type AuthError = {
+  message: string
+}
+
+function App() {
+  const [session, setSession] = useState<AuthSession | null>(() => loadSession())
+  const [status, setStatus] = useState<AuthStatus>("idle")
+  const [error, setError] = useState<AuthError | null>(null)
+
+  useEffect(() => {
+    const stored = loadSession()
+    if (stored) {
+      setSession(stored)
+    }
+  }, [])
+
+  const isSubmitting = status === "submitting"
+  const isSignedIn = isSessionValid(session)
+
+  const handleSignIn = async (values: SignInValues) => {
+    setStatus("submitting")
+    setError(null)
+    try {
+      const result = await signInRequest(values)
+      setSession(result)
+    } catch (error_) {
+      const message = error_ instanceof Error ? error_.message : "Unable to sign in. Please try again."
+      setError({ message })
+    } finally {
+      setStatus("idle")
+    }
   }
 
-  const handleSignUp = (_values: SignUpValues) => {
-    setIsSignedIn(true)
+  const handleSignUp = async (values: SignUpValues) => {
+    setStatus("submitting")
+    setError(null)
+    try {
+      const result = await signUpRequest(values)
+      setSession(result)
+    } catch (error_) {
+      const message = error_ instanceof Error ? error_.message : "Unable to sign up. Please try again."
+      setError({ message })
+    } finally {
+      setStatus("idle")
+    }
   }
 
   const handleSignOut = () => {
-    setIsSignedIn(false)
+    clearSession()
+    setSession(null)
+    setError(null)
   }
 
   return (
     <div className="app-shell">
       <Header isSignedIn={isSignedIn} />
       <MainContent
+        session={session}
         isSignedIn={isSignedIn}
+        isLoading={isSubmitting}
+        errorMessage={error?.message ?? null}
+        onDismissError={() => setError(null)}
         onSignIn={handleSignIn}
         onSignUp={handleSignUp}
         onSignOut={handleSignOut}
