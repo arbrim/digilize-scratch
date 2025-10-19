@@ -13,13 +13,13 @@ type FaturaLine = {
   amount: string
   unit: FaturaLineUnit
   price: string
-  isPaid: boolean
 }
 
 type FaturaFormState = {
   nr: string
   clientId: string
   date: string
+  paid: boolean
   items: FaturaLine[]
 }
 
@@ -40,7 +40,6 @@ const createEmptyLine = (): FaturaLine => ({
   amount: "1",
   unit: "m",
   price: "0",
-  isPaid: false,
 })
 
 const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) => {
@@ -50,6 +49,7 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
     nr: "",
     clientId: defaultClientId,
     date: todayISO,
+    paid: false,
     items: [createEmptyLine()],
   })
   const [submitted, setSubmitted] = useState(false)
@@ -78,10 +78,22 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
     }
   }
 
+  const handlePaidChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { checked } = event.target
+    setFormState((prev) => ({
+      ...prev,
+      paid: checked,
+    }))
+
+    if (submitted) {
+      setSubmitted(false)
+    }
+  }
+
   const handleLineChange = (
     index: number,
     field: keyof Omit<FaturaLine, "id">,
-    value: string | boolean,
+    value: string,
   ) => {
     setFormState((prev) => {
       const nextItems = prev.items.map((item, idx) =>
@@ -206,16 +218,13 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
                     <th scope="col">Sasia</th>
                     <th scope="col">Njesia</th>
                     <th scope="col">Cmimi</th>
-                    <th scope="col">Paguar?</th>
                     <th scope="col">Totali</th>
-                    <th scope="col">Totali pergjithshem</th>
                     <th scope="col">Veprime</th>
                   </tr>
                 </thead>
                 <tbody>
                   {formState.items.map((item, index) => {
                     const lineTotal = (Number(item.amount) || 0) * (Number(item.price) || 0)
-                    const isFirstRow = index === 0
 
                     return (
                       <tr key={item.id}>
@@ -281,27 +290,9 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
                             required
                           />
                         </td>
-                        <td data-label="Paguar?" className="table-cell-checkbox">
-                          <input
-                            id={`fatura-paid-${item.id}`}
-                            name="isPaid"
-                            type="checkbox"
-                            checked={item.isPaid}
-                            onChange={(event) => handleLineChange(index, "isPaid", event.target.checked)}
-                          />
-                        </td>
                         <td data-label="Totali">
                           <span className="table-total-value">{formatCurrency(lineTotal)}</span>
                         </td>
-                        {isFirstRow ? (
-                          <td
-                            data-label="Totali pergjithshem"
-                            className="table-total-pergjithshem"
-                            rowSpan={formState.items.length}
-                          >
-                            <span className="table-total-value">{formatCurrency(totalGeneral)}</span>
-                          </td>
-                        ) : null}
                         <td className="table-cell-actions">
                           <button
                             type="button"
@@ -318,7 +309,7 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th scope="row" colSpan={7}>
+                    <th scope="row" colSpan={5}>
                       Totali pergjithshem
                     </th>
                     <td>
@@ -339,6 +330,16 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
                 Shto rresht
               </button>
             </div>
+          </div>
+          <div className="form-group form-group-checkbox">
+            <label htmlFor="fatura-paid">Paguar?</label>
+            <input
+              id="fatura-paid"
+              name="paid"
+              type="checkbox"
+              checked={formState.paid}
+              onChange={handlePaidChange}
+            />
           </div>
           <div className="form-actions">
             <button type="submit" className="primary-action">

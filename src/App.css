@@ -686,36 +686,11 @@
   background-color: #ffffff;
 }
 
-.form-input-table td input[type="checkbox"] {
-  width: 1.2rem;
-  height: 1.2rem;
-  padding: 0;
-  border-radius: 0.4rem;
-  border: 1px solid #cbd5f5;
-  background: #ffffff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.table-cell-checkbox {
-  text-align: center;
-}
-
 .table-total-value {
   display: inline-block;
   min-width: 6rem;
   font-weight: 600;
   color: #0f172a;
-}
-
-.table-total-pergjithshem {
-  vertical-align: middle;
-  text-align: right;
-}
-
-.table-total-pergjithshem .table-total-value {
-  font-size: 1.05rem;
 }
 
 .form-input-table tfoot th,
