@@ -12,6 +12,7 @@ import {
   signUpRequest,
   type AuthSession,
 } from "./services/auth"
+import type { AppView } from "./types/navigation"
 import "./App.css"
 
 type AuthStatus = "idle" | "submitting"
@@ -24,6 +25,7 @@ function App() {
   const [session, setSession] = useState<AuthSession | null>(() => loadSession())
   const [status, setStatus] = useState<AuthStatus>("idle")
   const [error, setError] = useState<AuthError | null>(null)
+  const [activeView, setActiveView] = useState<AppView>("home")
 
   useEffect(() => {
     const stored = loadSession()
@@ -35,12 +37,17 @@ function App() {
   const isSubmitting = status === "submitting"
   const isSignedIn = isSessionValid(session)
 
+  const resetToHome = () => {
+    setActiveView("home")
+  }
+
   const handleSignIn = async (values: SignInValues) => {
     setStatus("submitting")
     setError(null)
     try {
       const result = await signInRequest(values)
       setSession(result)
+      resetToHome()
     } catch (error_) {
       const message = error_ instanceof Error ? error_.message : "Unable to sign in. Please try again."
       setError({ message })
@@ -55,6 +62,7 @@ function App() {
     try {
       const result = await signUpRequest(values)
       setSession(result)
+      resetToHome()
     } catch (error_) {
       const message = error_ instanceof Error ? error_.message : "Unable to sign up. Please try again."
       setError({ message })
@@ -67,20 +75,27 @@ function App() {
     clearSession()
     setSession(null)
     setError(null)
+    resetToHome()
+  }
+
+  const handleNavigate = (view: AppView) => {
+    setActiveView(view)
   }
 
   return (
     <div className="app-shell">
-      <Header isSignedIn={isSignedIn} />
+      <Header isSignedIn={isSignedIn} activeView={activeView} onNavigate={handleNavigate} />
       <MainContent
         session={session}
         isSignedIn={isSignedIn}
         isLoading={isSubmitting}
+        activeView={activeView}
         errorMessage={error?.message ?? null}
         onDismissError={() => setError(null)}
         onSignIn={handleSignIn}
         onSignUp={handleSignUp}
         onSignOut={handleSignOut}
+        onNavigate={handleNavigate}
       />
       <Footer />
     </div>

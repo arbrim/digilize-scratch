@@ -2,8 +2,12 @@ import type { FC } from "react"
 import { useEffect, useMemo, useState } from "react"
 import { brand } from "../config/brand"
 import type { AuthSession } from "../services/auth"
+import type { AppView } from "../types/navigation"
+import ClientsTable from "./ClientsTable"
+import FaturaTable from "./FaturaTable"
 import SignInForm, { type SignInValues } from "./SignInForm"
 import SignUpForm, { type SignUpValues } from "./SignUpForm"
+import UsersTable from "./UsersTable"
 
 type AuthView = "sign-in" | "sign-up"
 
@@ -11,22 +15,26 @@ type MainContentProps = {
   isSignedIn: boolean
   isLoading: boolean
   session: AuthSession | null
+  activeView: AppView
   errorMessage: string | null
   onDismissError: () => void
   onSignIn: (values: SignInValues) => Promise<void> | void
   onSignUp: (values: SignUpValues) => Promise<void> | void
   onSignOut: () => void
+  onNavigate: (view: AppView) => void
 }
 
 const MainContent: FC<MainContentProps> = ({
   isSignedIn,
   isLoading,
   session,
+  activeView,
   errorMessage,
   onDismissError,
   onSignIn,
   onSignUp,
   onSignOut,
+  onNavigate,
 }) => {
   const [view, setView] = useState<AuthView>("sign-in")
 
@@ -52,6 +60,36 @@ const MainContent: FC<MainContentProps> = ({
     }
   }, [session])
 
+  const renderSignedInContent = () => {
+    switch (activeView) {
+      case "fatura":
+        return <FaturaTable />
+      case "clients":
+        return <ClientsTable />
+      case "users":
+        return <UsersTable />
+      case "home":
+      default:
+        return (
+          <div className="placeholder-card">
+            <h2>Mire se erdhe serish!</h2>
+            <p>
+              Zgjidh "Fatura", "Clients" ose "Users" nga menuja per te pare tabelat perkates, ose perdor
+              seksionet e tjera per te eksploruar platformen {brand.name}.
+            </p>
+            <div className="placeholder-actions">
+              <button type="button" className="secondary-action" onClick={() => onNavigate("fatura")}>
+                Hap faturat
+              </button>
+              <button type="button" className="secondary-action" onClick={() => onNavigate("clients")}>
+                Shiko klientet
+              </button>
+            </div>
+          </div>
+        )
+    }
+  }
+
   return (
     <main className="app-main">
       <div className="container main-inner">
@@ -66,19 +104,22 @@ const MainContent: FC<MainContentProps> = ({
           <div className="form-error" role="alert">
             <span>{errorMessage}</span>
             <button type="button" onClick={onDismissError} aria-label="Dismiss error">
-              Close
+              Mbyll
             </button>
           </div>
         ) : null}
 
         {isSignedIn ? (
-          <div className="welcome-actions">
-            {sessionExpiresText ? (
-              <p className="session-note">Session stays active until {sessionExpiresText}.</p>
-            ) : null}
-            <button type="button" className="primary-action" onClick={onSignOut}>
-              Sign out
-            </button>
+          <div className="signed-in-wrapper">
+            <div className="dashboard-header">
+              {sessionExpiresText ? (
+                <p className="session-note">Sesioni qendron aktiv deri me {sessionExpiresText}.</p>
+              ) : null}
+              <button type="button" className="primary-action" onClick={onSignOut}>
+                Sign out
+              </button>
+            </div>
+            {renderSignedInContent()}
           </div>
         ) : (
           <div className="auth-panel" aria-busy={isLoading}>
