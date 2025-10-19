@@ -527,3 +527,25 @@
   gap: 0.75rem;
 }
 
+.sign-out-link {
+  border: none;
+  background: none;
+  color: inherit;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.sign-out-link:hover {
+  color: #38bdf8;
+}
+
+.switch-tab {
+  display: inline-block;
+  text-decoration: none;
+  text-align: center;
+}
+
+.switch-tab.switch-tab-active {
+  color: #f8fafc;
+}

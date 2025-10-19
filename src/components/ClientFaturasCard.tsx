@@ -2,22 +2,32 @@ import type { FC } from "react"
 import type { Client, Fatura } from "../data/sampleData"
 import { calculateFaturaTotal, formatCurrency, formatDate } from "../data/sampleData"
 
-type FaturaTableProps = {
+type ClientFaturasCardProps = {
+  client: Client
   faturas: Fatura[]
-  clients: Client[]
-  heading?: string
-  onSelect?: (fatura: Fatura) => void
-  highlightId?: string | null
+  onSelectFatura: (fatura: Fatura) => void
 }
 
-const FaturaTable: FC<FaturaTableProps> = ({ faturas, clients, heading = "Faturat", onSelect, highlightId }) => {
-  const clientMap = new Map(clients.map((client) => [client.id, client]))
-
+const ClientFaturasCard: FC<ClientFaturasCardProps> = ({ client, faturas, onSelectFatura }) => {
   const sorted = [...faturas].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+  if (sorted.length === 0) {
+    return (
+      <div className="data-card">
+        <h2 className="data-card-title">Faturat per {client.name}</h2>
+        <p>Ky klient ende nuk ka fatura te regjistruara.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="data-card">
-      <h2 className="data-card-title">{heading}</h2>
+      <div className="client-card-header">
+        <div>
+          <h2 className="data-card-title">Faturat per {client.name}</h2>
+          <p className="client-card-sub">Industria: {client.industry} - Kontakti: {client.contact}</p>
+        </div>
+      </div>
       <table className="data-table">
         <thead>
           <tr>
@@ -31,28 +41,16 @@ const FaturaTable: FC<FaturaTableProps> = ({ faturas, clients, heading = "Fatura
         </thead>
         <tbody>
           {sorted.map((fatura) => {
-            const client = clientMap.get(fatura.clientId)
             const total = calculateFaturaTotal(fatura)
-            const isHighlighted = highlightId === fatura.id
-            const rowClassName = onSelect
-              ? isHighlighted
-                ? "table-row-clickable table-row-selected"
-                : "table-row-clickable"
-              : undefined
             return (
               <tr
                 key={fatura.id}
-                className={rowClassName}
-                onClick={onSelect ? () => onSelect(fatura) : undefined}
+                className="table-row-clickable"
+                onClick={() => onSelectFatura(fatura)}
               >
                 <td>{formatDate(fatura.date)}</td>
                 <td>{fatura.nr}</td>
-                <td>
-                  <div className="table-cell-stack">
-                    <span>{fatura.description}</span>
-                    {client ? <small className="table-cell-sub">{client.name}</small> : null}
-                  </div>
-                </td>
+                <td>{fatura.description}</td>
                 <td>{fatura.quantity}</td>
                 <td>{formatCurrency(total)}</td>
                 <td>
@@ -69,4 +67,4 @@ const FaturaTable: FC<FaturaTableProps> = ({ faturas, clients, heading = "Fatura
   )
 }
 
-export default FaturaTable
+export default ClientFaturasCard

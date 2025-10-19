@@ -25,29 +25,29 @@ const SignInForm: FC<SignInFormProps> = ({ onSubmit, isSubmitting = false }) => 
   return (
     <form className="auth-form" onSubmit={handleSubmit} aria-busy={isSubmitting}>
       <div className="form-group">
-        <label htmlFor="username">Username</label>
+        <label htmlFor="username">Perdoruesi</label>
         <input
           id="username"
           name="username"
           type="text"
-          placeholder="Enter username"
+          placeholder="Shkruaj perdoruesin"
           required
           disabled={isSubmitting}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="password">Password</label>
+        <label htmlFor="password">Fjalekalimi</label>
         <input
           id="password"
           name="password"
           type="password"
-          placeholder="Enter password"
+          placeholder="Shkruaj fjalekalimin"
           required
           disabled={isSubmitting}
         />
       </div>
       <button type="submit" className="primary-action" disabled={isSubmitting}>
-        {isSubmitting ? "Signing in..." : "Sign in"}
+        {isSubmitting ? "Duke u futur..." : "Hyr tani"}
       </button>
     </form>
   )

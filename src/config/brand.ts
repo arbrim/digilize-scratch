@@ -5,7 +5,8 @@ const rawTagline = (import.meta.env.VITE_BRAND_TAGLINE as string | undefined)?.t
 export const brand = {
   name: rawName && rawName.length > 0 ? rawName : "Galani",
   logoSrc: rawLogo && rawLogo.length > 0 ? rawLogo : "/galani.jpg",
-  tagline: rawTagline && rawTagline.length > 0 ? rawTagline : "Built for a polished desktop and mobile experience.",
+  tagline: rawTagline && rawTagline.length > 0 ? rawTagline : "Krijuar per nje pervoje moderne ne desktop dhe mobile.",
 } as const
 
 export type BrandConfig = typeof brand
+

@@ -1,37 +1,49 @@
 import type { FC } from "react"
+import type { Client } from "../data/sampleData"
 
-const rows = [
-  { name: "Alba Trade", industry: "Retail", contact: "alba@client.com", status: "Active" },
-  { name: "Kosova Logistics", industry: "Logistics", contact: "info@kosovalog.com", status: "Pending" },
-  { name: "Dardan Tech", industry: "Technology", contact: "support@dardantech.io", status: "Active" },
-]
+type ClientsTableProps = {
+  clients: Client[]
+  onSelect: (clientId: string) => void
+  selectedClientId?: string | null
+}
 
-const ClientsTable: FC = () => {
+const ClientsTable: FC<ClientsTableProps> = ({ clients, onSelect, selectedClientId }) => {
   return (
     <div className="data-card">
-      <h2 className="data-card-title">Clients Overview</h2>
+      <h2 className="data-card-title">Lista e klienteve</h2>
       <table className="data-table">
         <thead>
           <tr>
-            <th scope="col">Company</th>
-            <th scope="col">Industry</th>
-            <th scope="col">Primary Contact</th>
-            <th scope="col">Status</th>
+            <th scope="col">Kompania</th>
+            <th scope="col">Industria</th>
+            <th scope="col">Kontakti kryesor</th>
+            <th scope="col">Statusi</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((row) => (
-            <tr key={row.name}>
-              <td>{row.name}</td>
-              <td>{row.industry}</td>
-              <td>{row.contact}</td>
-              <td>
-                <span className={`badge badge-${row.status === "Active" ? "success" : "warning"}`}>
-                  {row.status}
-                </span>
-              </td>
-            </tr>
-          ))}
+          {clients.map((client) => {
+            const isSelected = selectedClientId === client.id
+            return (
+              <tr
+                key={client.id}
+                className={isSelected ? "table-row-clickable table-row-selected" : "table-row-clickable"}
+                onClick={() => onSelect(client.id)}
+              >
+                <td>{client.name}</td>
+                <td>{client.industry}</td>
+                <td>{client.contact}</td>
+                <td>
+                  <span className={`badge badge-${client.status === "Active" ? "success" : client.status === "Pending" ? "warning" : "inactive"}`}>
+                    {client.status === "Active"
+                      ? "Aktiv"
+                      : client.status === "Pending"
+                        ? "Ne pritje"
+                        : "Jo aktiv"}
+                  </span>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

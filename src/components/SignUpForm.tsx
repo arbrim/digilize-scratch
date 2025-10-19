@@ -27,12 +27,12 @@ const SignUpForm: FC<SignUpFormProps> = ({ onSubmit, isSubmitting = false }) => 
   return (
     <form className="auth-form" onSubmit={handleSubmit} aria-busy={isSubmitting}>
       <div className="form-group">
-        <label htmlFor="signup-username">Username</label>
+        <label htmlFor="signup-username">Perdoruesi</label>
         <input
           id="signup-username"
           name="username"
           type="text"
-          placeholder="Choose username"
+          placeholder="Zgjidh perdoruesin"
           required
           disabled={isSubmitting}
         />
@@ -43,24 +43,24 @@ const SignUpForm: FC<SignUpFormProps> = ({ onSubmit, isSubmitting = false }) => 
           id="signup-email"
           name="email"
           type="email"
-          placeholder="name@example.com"
+          placeholder="shembull@kompania.com"
           required
           disabled={isSubmitting}
         />
       </div>
       <div className="form-group">
-        <label htmlFor="signup-password">Password</label>
+        <label htmlFor="signup-password">Fjalekalimi</label>
         <input
           id="signup-password"
           name="password"
           type="password"
-          placeholder="Create password"
+          placeholder="Krijo fjalekalimin"
           required
           disabled={isSubmitting}
         />
       </div>
       <button type="submit" className="primary-action" disabled={isSubmitting}>
-        {isSubmitting ? "Creating account..." : "Create account"}
+        {isSubmitting ? "Duke u regjistruar..." : "Krijo llogari"}
       </button>
     </form>
   )
