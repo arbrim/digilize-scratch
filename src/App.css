@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
   line-height: 1.5;
   color: #0f172a;
@@ -632,6 +632,141 @@
   border-radius: 9999px;
 }
 
+.form-group-table label {
+  margin-bottom: 0.2rem;
+}
+
+.form-table-scroll {
+  margin-top: 0.3rem;
+}
+
+.form-input-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.form-input-table th,
+.form-input-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form-input-table thead th {
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #475569;
+  background: #f8fafc;
+}
+
+.form-input-table tbody tr:last-of-type td {
+  border-bottom: none;
+}
+
+.form-input-table td input,
+.form-input-table td select {
+  width: 100%;
+  font: inherit;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.65rem;
+  border: 1px solid #cbd5f5;
+  background-color: #f8fafc;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-sizing: border-box;
+}
+
+.form-input-table td input:focus,
+.form-input-table td select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  background-color: #ffffff;
+}
+
+.form-input-table td input[type="checkbox"] {
+  width: 1.2rem;
+  height: 1.2rem;
+  padding: 0;
+  border-radius: 0.4rem;
+  border: 1px solid #cbd5f5;
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-cell-checkbox {
+  text-align: center;
+}
+
+.table-total-value {
+  display: inline-block;
+  min-width: 6rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.table-total-pergjithshem {
+  vertical-align: middle;
+  text-align: right;
+}
+
+.table-total-pergjithshem .table-total-value {
+  font-size: 1.05rem;
+}
+
+.form-input-table tfoot th,
+.form-input-table tfoot td {
+  padding: 0.75rem;
+  background: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.form-input-table tfoot th {
+  text-align: left;
+}
+
+.table-cell-actions {
+  text-align: right;
+  min-width: 6rem;
+}
+
+.table-action-button {
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.6rem;
+  border: 1px solid #cbd5f5;
+  background: #e0f2fe;
+  color: #1d4ed8;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.table-action-button:hover:not(:disabled) {
+  background: #bfdbfe;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+.table-action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.table-inline-actions {
+  margin-top: 0.75rem;
+}
+
+.table-inline-actions .secondary-action {
+  width: auto;
+}
+
 .table-row-clickable {
   cursor: pointer;
   transition: background 0.15s ease, box-shadow 0.15s ease;
@@ -833,3 +968,4 @@ button.table-card:disabled {
     text-align: left;
   }
 }
+
