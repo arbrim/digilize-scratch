@@ -1,30 +1,15 @@
-import type { FC } from "react"
-import type { Client, Fatura } from "../data/sampleData"
-import { formatDate, getFaturasByClient } from "../data/sampleData"
-import ClientFaturasCard from "../components/ClientFaturasCard"
+﻿import type { FC } from "react"
+import type { Fatura } from "../data/sampleData"
+import { formatDate } from "../data/sampleData"
 
 type HomePageProps = {
-  selectedClient: Client | null
   faturas: Fatura[]
   onSelectFatura: (fatura: Fatura) => void
   onGoToClients: () => void
   onGoToFaturas: () => void
 }
 
-const HomePage: FC<HomePageProps> = ({
-  selectedClient,
-  faturas,
-  onSelectFatura,
-  onGoToClients,
-  onGoToFaturas,
-}) => {
-  if (selectedClient) {
-    const clientFaturas = getFaturasByClient(selectedClient.id)
-    return (
-      <ClientFaturasCard client={selectedClient} faturas={clientFaturas} onSelectFatura={onSelectFatura} />
-    )
-  }
-
+const HomePage: FC<HomePageProps> = ({ faturas, onSelectFatura, onGoToClients, onGoToFaturas }) => {
   const upcomingInvoices = [...faturas]
     .filter((fatura) => !fatura.paid)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())

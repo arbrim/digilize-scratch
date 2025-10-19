@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from "react"
+﻿import { useEffect, useState } from "react"
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom"
 import AppLayout from "./layouts/AppLayout"
 import ProtectedRoute from "./components/ProtectedRoute"
 import AuthPage from "./pages/AuthPage"
 import ClientsPage from "./pages/ClientsPage"
+import ClientDetailsPage from "./pages/ClientDetailsPage"
 import FaturaPage from "./pages/FaturaPage"
+import FaturaDetailPage from "./pages/FaturaDetailPage"
 import HomePage from "./pages/HomePage"
 import UsersPage from "./pages/UsersPage"
 import type { SignInValues } from "./components/SignInForm"
@@ -17,12 +19,7 @@ import {
   signUpRequest,
   type AuthSession,
 } from "./services/auth"
-import {
-  clients as sampleClients,
-  faturas as sampleFaturas,
-  getClientById,
-} from "./data/sampleData"
-import type { Client, Fatura } from "./data/sampleData"
+import { clients as sampleClients, faturas as sampleFaturas, type Fatura } from "./data/sampleData"
 import "./App.css"
 
 type AuthStatus = "idle" | "submitting"
@@ -36,8 +33,6 @@ function App() {
   const [session, setSession] = useState<AuthSession | null>(() => loadSession())
   const [status, setStatus] = useState<AuthStatus>("idle")
   const [error, setError] = useState<AuthError | null>(null)
-  const [selectedClientId, setSelectedClientId] = useState<string | null>(null)
-  const [selectedFaturaId, setSelectedFaturaId] = useState<string | null>(null)
 
   useEffect(() => {
     const stored = loadSession()
@@ -52,32 +47,12 @@ function App() {
   const clients = sampleClients
   const faturas = sampleFaturas
 
-  const selectedClient: Client | null = useMemo(() => {
-    if (!selectedClientId) {
-      return null
-    }
-    return getClientById(selectedClientId) ?? null
-  }, [selectedClientId])
-
-  const selectedFatura: Fatura | null = useMemo(() => {
-    if (!selectedFaturaId) {
-      return null
-    }
-    return faturas.find((entry) => entry.id === selectedFaturaId) ?? null
-  }, [selectedFaturaId, faturas])
-
-  const resetSelections = () => {
-    setSelectedClientId(null)
-    setSelectedFaturaId(null)
-  }
-
   const handleSignIn = async (values: SignInValues): Promise<boolean> => {
     setStatus("submitting")
     setError(null)
     try {
       const result = await signInRequest(values)
       setSession(result)
-      resetSelections()
       return true
     } catch (error_) {
       const message = error_ instanceof Error ? error_.message : "Nuk u arrit hyrja. Provo perseri."
@@ -94,7 +69,6 @@ function App() {
     try {
       const result = await signUpRequest(values)
       setSession(result)
-      resetSelections()
       return true
     } catch (error_) {
       const message = error_ instanceof Error ? error_.message : "Nuk u arrit regjistrimi. Provo perseri."
@@ -109,25 +83,19 @@ function App() {
     clearSession()
     setSession(null)
     setError(null)
-    resetSelections()
     navigate("/signin", { replace: true })
   }
 
   const handleSelectClient = (clientId: string) => {
-    setSelectedClientId(clientId)
-    setSelectedFaturaId(null)
+    navigate(`/clients/${clientId}`)
   }
 
   const handleSelectFatura = (fatura: Fatura) => {
-    setSelectedFaturaId(fatura.id)
-    setSelectedClientId(fatura.clientId)
-    navigate("/fatura")
+    navigate(`/fatura/${fatura.id}`)
   }
 
   const handleBackToClient = (clientId: string) => {
-    setSelectedClientId(clientId)
-    setSelectedFaturaId(null)
-    navigate("/clients")
+    navigate(`/clients/${clientId}`)
   }
 
   return (
@@ -138,7 +106,6 @@ function App() {
           element={
             <ProtectedRoute isSignedIn={isSignedIn}>
               <HomePage
-                selectedClient={selectedClient}
                 faturas={faturas}
                 onSelectFatura={handleSelectFatura}
                 onGoToClients={() => navigate("/clients")}
@@ -151,12 +118,15 @@ function App() {
           path="/clients"
           element={
             <ProtectedRoute isSignedIn={isSignedIn}>
-              <ClientsPage
-                clients={clients}
-                selectedClient={selectedClient}
-                onSelectClient={handleSelectClient}
-                onSelectFatura={handleSelectFatura}
-              />
+              <ClientsPage clients={clients} onSelectClient={handleSelectClient} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/clients/:clientId"
+          element={
+            <ProtectedRoute isSignedIn={isSignedIn}>
+              <ClientDetailsPage clients={clients} faturas={faturas} onSelectFatura={handleSelectFatura} />
             </ProtectedRoute>
           }
         />
@@ -164,13 +134,15 @@ function App() {
           path="/fatura"
           element={
             <ProtectedRoute isSignedIn={isSignedIn}>
-              <FaturaPage
-                faturas={faturas}
-                clients={clients}
-                selectedFatura={selectedFatura}
-                onSelectFatura={handleSelectFatura}
-                onBackToClient={handleBackToClient}
-              />
+              <FaturaPage faturas={faturas} clients={clients} onSelectFatura={handleSelectFatura} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/fatura/:faturaId"
+          element={
+            <ProtectedRoute isSignedIn={isSignedIn}>
+              <FaturaDetailPage faturas={faturas} clients={clients} onBackToClient={handleBackToClient} />
             </ProtectedRoute>
           }
         />
