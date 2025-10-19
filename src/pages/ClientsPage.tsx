@@ -11,10 +11,6 @@ const ClientsPage: FC<ClientsPageProps> = ({ clients, onSelectClient }) => {
   return (
     <div className="dashboard-section-stack">
       <ClientsTable clients={clients} onSelect={onSelectClient} />
-      <div className="data-card">
-        <h2 className="data-card-title">Detajet e klientit</h2>
-        <p>Zgjidh nje klient nga lista per te hapur faqen me faturat dhe informacionet shoqeruese.</p>
-      </div>
     </div>
   )
 }
