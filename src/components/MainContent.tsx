@@ -3,7 +3,11 @@ import { useEffect, useMemo, useState } from "react"
 import { brand } from "../config/brand"
 import type { AuthSession } from "../services/auth"
 import type { AppView } from "../types/navigation"
+import type { Client, Fatura } from "../data/sampleData"
+import { formatDate, getFaturasByClient } from "../data/sampleData"
+import ClientFaturasCard from "./ClientFaturasCard"
 import ClientsTable from "./ClientsTable"
+import FaturaDetailCard from "./FaturaDetailCard"
 import FaturaTable from "./FaturaTable"
 import SignInForm, { type SignInValues } from "./SignInForm"
 import SignUpForm, { type SignUpValues } from "./SignUpForm"
@@ -16,12 +20,19 @@ type MainContentProps = {
   isLoading: boolean
   session: AuthSession | null
   activeView: AppView
+  clients: Client[]
+  faturas: Fatura[]
+  selectedClient: Client | null
+  selectedFatura: Fatura | null
   errorMessage: string | null
   onDismissError: () => void
   onSignIn: (values: SignInValues) => Promise<void> | void
   onSignUp: (values: SignUpValues) => Promise<void> | void
   onSignOut: () => void
   onNavigate: (view: AppView) => void
+  onSelectClient: (clientId: string) => void
+  onSelectFatura: (fatura: Fatura) => void
+  onBackToClient: (clientId: string) => void
 }
 
 const MainContent: FC<MainContentProps> = ({
@@ -29,12 +40,19 @@ const MainContent: FC<MainContentProps> = ({
   isLoading,
   session,
   activeView,
+  clients,
+  faturas,
+  selectedClient,
+  selectedFatura,
   errorMessage,
   onDismissError,
   onSignIn,
   onSignUp,
   onSignOut,
   onNavigate,
+  onSelectClient,
+  onSelectFatura,
+  onBackToClient,
 }) => {
   const [view, setView] = useState<AuthView>("sign-in")
 
@@ -62,31 +80,98 @@ const MainContent: FC<MainContentProps> = ({
 
   const renderSignedInContent = () => {
     switch (activeView) {
-      case "fatura":
-        return <FaturaTable />
-      case "clients":
-        return <ClientsTable />
+      case "clients": {
+        const clientFaturas = selectedClient ? getFaturasByClient(selectedClient.id) : []
+        return (
+          <div className="dashboard-section-stack">
+            <ClientsTable
+              clients={clients}
+              onSelect={onSelectClient}
+              selectedClientId={selectedClient?.id}
+            />
+            {selectedClient ? (
+              <ClientFaturasCard
+                client={selectedClient}
+                faturas={clientFaturas}
+                onSelectFatura={onSelectFatura}
+              />
+            ) : null}
+          </div>
+        )
+      }
       case "users":
         return <UsersTable />
+      case "fatura": {
+        if (selectedFatura) {
+          const client = clients.find((entry) => entry.id === selectedFatura.clientId)
+          return (
+            <FaturaDetailCard
+              fatura={selectedFatura}
+              client={client}
+              onBackToClient={client ? onBackToClient : undefined}
+            />
+          )
+        }
+        return (
+          <FaturaTable
+            faturas={faturas}
+            clients={clients}
+            onSelect={onSelectFatura}
+          />
+        )
+      }
       case "home":
-      default:
+      default: {
+        if (selectedClient) {
+          const clientFaturas = getFaturasByClient(selectedClient.id)
+          return (
+            <ClientFaturasCard
+              client={selectedClient}
+              faturas={clientFaturas}
+              onSelectFatura={onSelectFatura}
+            />
+          )
+        }
+
+        const upcomingInvoices = [...faturas]
+          .filter((fatura) => !fatura.paid)
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .slice(0, 3)
+
         return (
           <div className="placeholder-card">
             <h2>Mire se erdhe serish!</h2>
             <p>
-              Zgjidh "Fatura", "Clients" ose "Users" nga menuja per te pare tabelat perkates, ose perdor
-              seksionet e tjera per te eksploruar platformen {brand.name}.
+              Zgjidh "Clients" per te punuar me klientet, "Users" per te pare ekipin ose perzgjidh nje fature
+              poshte per te pare detajet.
             </p>
             <div className="placeholder-actions">
-              <button type="button" className="secondary-action" onClick={() => onNavigate("fatura")}>
-                Hap faturat
-              </button>
               <button type="button" className="secondary-action" onClick={() => onNavigate("clients")}>
                 Shiko klientet
               </button>
+              <button type="button" className="secondary-action" onClick={() => onNavigate("fatura")}>
+                Hap faturat
+              </button>
+            </div>
+            <div className="home-invoices">
+              <h3>Fatura qe duhen ndjekur</h3>
+              <ul>
+                {upcomingInvoices.map((fatura) => (
+                  <li key={fatura.id}>
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={() => onSelectFatura(fatura)}
+                    >
+                      {fatura.nr}  -  {fatura.description}  -  {formatDate(fatura.date)}
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         )
+      }
     }
   }
 
@@ -183,3 +268,4 @@ const MainContent: FC<MainContentProps> = ({
 }
 
 export default MainContent
+

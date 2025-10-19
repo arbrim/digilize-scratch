@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Footer from "./components/Footer"
 import Header from "./components/Header"
 import MainContent from "./components/MainContent"
@@ -13,6 +13,8 @@ import {
   type AuthSession,
 } from "./services/auth"
 import type { AppView } from "./types/navigation"
+import { clients as sampleClients, faturas as sampleFaturas, getClientById } from "./data/sampleData"
+import type { Client, Fatura } from "./data/sampleData"
 import "./App.css"
 
 type AuthStatus = "idle" | "submitting"
@@ -26,6 +28,8 @@ function App() {
   const [status, setStatus] = useState<AuthStatus>("idle")
   const [error, setError] = useState<AuthError | null>(null)
   const [activeView, setActiveView] = useState<AppView>("home")
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null)
+  const [selectedFaturaId, setSelectedFaturaId] = useState<string | null>(null)
 
   useEffect(() => {
     const stored = loadSession()
@@ -37,8 +41,31 @@ function App() {
   const isSubmitting = status === "submitting"
   const isSignedIn = isSessionValid(session)
 
+  const clients = sampleClients
+  const faturas = sampleFaturas
+
+  const selectedClient: Client | null = useMemo(() => {
+    if (!selectedClientId) {
+      return null
+    }
+    return getClientById(selectedClientId) ?? null
+  }, [selectedClientId])
+
+  const selectedFatura: Fatura | null = useMemo(() => {
+    if (!selectedFaturaId) {
+      return null
+    }
+    const found = faturas.find((entry) => entry.id === selectedFaturaId)
+    return found ?? null
+  }, [selectedFaturaId, faturas])
+
   const resetToHome = () => {
     setActiveView("home")
+  }
+
+  const resetSelections = () => {
+    setSelectedClientId(null)
+    setSelectedFaturaId(null)
   }
 
   const handleSignIn = async (values: SignInValues) => {
@@ -75,11 +102,31 @@ function App() {
     clearSession()
     setSession(null)
     setError(null)
+    resetSelections()
     resetToHome()
   }
 
   const handleNavigate = (view: AppView) => {
     setActiveView(view)
+  }
+
+  const handleClientSelect = (clientId: string) => {
+    setSelectedClientId(clientId)
+    setSelectedFaturaId(null)
+    setActiveView("home")
+  }
+
+  const handleFaturaSelect = (fatura: Fatura) => {
+    setSelectedFaturaId(fatura.id)
+    if (fatura.clientId) {
+      setSelectedClientId(fatura.clientId)
+    }
+    setActiveView("fatura")
+  }
+
+  const handleBackToClient = (clientId: string) => {
+    setSelectedClientId(clientId)
+    setActiveView("home")
   }
 
   return (
@@ -90,12 +137,19 @@ function App() {
         isSignedIn={isSignedIn}
         isLoading={isSubmitting}
         activeView={activeView}
+        clients={clients}
+        faturas={faturas}
+        selectedClient={selectedClient}
+        selectedFatura={selectedFatura}
         errorMessage={error?.message ?? null}
         onDismissError={() => setError(null)}
         onSignIn={handleSignIn}
         onSignUp={handleSignUp}
         onSignOut={handleSignOut}
         onNavigate={handleNavigate}
+        onSelectClient={handleClientSelect}
+        onSelectFatura={handleFaturaSelect}
+        onBackToClient={handleBackToClient}
       />
       <Footer />
     </div>
