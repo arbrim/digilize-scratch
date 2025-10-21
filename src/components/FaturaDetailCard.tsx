@@ -1,11 +1,7 @@
+﻿import { openInvoicePrintWindow, type InvoiceSnapshot } from "../services/invoicePdf"
 import type { FC } from "react"
 import type { Client, Fatura, FaturaLineItem } from "../data/sampleData"
-import {
-  calculateFaturaTotal,
-  formatCurrency,
-  formatDate,
-  getFaturaLineItems,
-} from "../data/sampleData"
+import { calculateFaturaTotal, formatCurrency, formatDate, getFaturaLineItems } from "../data/sampleData"
 
 const colorTypeOptions = ["CMYK", "Pantone", "RGB", "RAL", "Metallic"]
 const priceOptions = Array.from({ length: 16 }, (_, index) => (15 + index).toString())
@@ -16,21 +12,20 @@ type FaturaDetailCardProps = {
   onBackToClient?: (clientId: string) => void
 }
 
-const toFallbackLine = (fatura: Fatura): FaturaLineItem => ({
-  id: `${fatura.id}-line`,
-  faturaId: fatura.id,
-  description: fatura.description,
-  colorType: "-",
-  quantity: fatura.quantity,
-  unit: "cope",
-  unitPrice: fatura.unitPrice,
-})
-
 const FaturaDetailCard: FC<FaturaDetailCardProps> = ({ fatura, client, onBackToClient }) => {
   const clientName = client?.name ?? "Klient i panjohur"
   const lineItems = getFaturaLineItems(fatura.id)
   const itemsToDisplay = lineItems.length > 0 ? lineItems : [toFallbackLine(fatura)]
   const total = calculateFaturaTotal(fatura, itemsToDisplay)
+
+  const handleDownloadPdf = () => {
+    const snapshot: InvoiceSnapshot = {
+      fatura,
+      clientName,
+      items: itemsToDisplay,
+    }
+    openInvoicePrintWindow(snapshot)
+  }
 
   return (
     <div className="data-card">
@@ -41,9 +36,14 @@ const FaturaDetailCard: FC<FaturaDetailCardProps> = ({ fatura, client, onBackToC
             {`Fatura ${fatura.nr} - Data: ${formatDate(fatura.date)} - ${client ? `Klienti: ${client.name}` : "Klient i panjohur"}`}
           </p>
         </div>
-        <span className={`badge badge-${fatura.paid ? "success" : "warning"}`}>
-          {fatura.paid ? "Paguar" : "Pa paguar"}
-        </span>
+        <div className="fatura-detail-header-actions">
+          <span className={`badge badge-${fatura.paid ? "success" : "warning"}`}>
+            {fatura.paid ? "Paguar" : "Pa paguar"}
+          </span>
+          <button type="button" className="secondary-action" onClick={handleDownloadPdf}>
+            Shkarko PDF
+          </button>
+        </div>
       </div>
 
       <form className="data-form" aria-label="Detajet e fatures">
@@ -174,4 +174,16 @@ const FaturaDetailCard: FC<FaturaDetailCardProps> = ({ fatura, client, onBackToC
   )
 }
 
+const toFallbackLine = (fatura: Fatura): FaturaLineItem => ({
+  id: `${fatura.id}-fallback`,
+  faturaId: fatura.id,
+  description: fatura.description,
+  colorType: "-",
+  quantity: fatura.quantity,
+  unit: "cope",
+  unitPrice: fatura.unitPrice,
+})
+
 export default FaturaDetailCard
+
+

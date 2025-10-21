@@ -1107,3 +1107,15 @@ button.table-card:disabled {
   color: #b91c1c;
 }
 
+.fatura-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+.fatura-detail-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
