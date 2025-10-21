@@ -1,6 +1,11 @@
 import type { FC } from "react"
-import type { Client, Fatura } from "../data/sampleData"
-import { calculateFaturaTotal, formatCurrency, formatDate } from "../data/sampleData"
+import type { Client, Fatura, FaturaLineItem } from "../data/sampleData"
+import {
+  calculateFaturaTotal,
+  formatCurrency,
+  formatDate,
+  getFaturaLineItems,
+} from "../data/sampleData"
 
 const colorTypeOptions = ["CMYK", "Pantone", "RGB", "RAL", "Metallic"]
 const priceOptions = Array.from({ length: 16 }, (_, index) => (15 + index).toString())
@@ -11,13 +16,21 @@ type FaturaDetailCardProps = {
   onBackToClient?: (clientId: string) => void
 }
 
+const toFallbackLine = (fatura: Fatura): FaturaLineItem => ({
+  id: `${fatura.id}-line`,
+  faturaId: fatura.id,
+  description: fatura.description,
+  colorType: "-",
+  quantity: fatura.quantity,
+  unit: "cope",
+  unitPrice: fatura.unitPrice,
+})
+
 const FaturaDetailCard: FC<FaturaDetailCardProps> = ({ fatura, client, onBackToClient }) => {
   const clientName = client?.name ?? "Klient i panjohur"
-  const total = calculateFaturaTotal(fatura)
-  const unitPriceDisplay = String(fatura.unitPrice)
-  const amountDisplay = String(fatura.quantity)
-  const colorTypeDisplay = "-"
-  const unitDisplay = "cope"
+  const lineItems = getFaturaLineItems(fatura.id)
+  const itemsToDisplay = lineItems.length > 0 ? lineItems : [toFallbackLine(fatura)]
+  const total = calculateFaturaTotal(fatura, itemsToDisplay)
 
   return (
     <div className="data-card">
@@ -65,42 +78,59 @@ const FaturaDetailCard: FC<FaturaDetailCardProps> = ({ fatura, client, onBackToC
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td data-label="Pershkrimi">
-                    <input id="fatura-detail-description" type="text" value={fatura.description} disabled />
-                  </td>
-                  <td data-label="Lloji i ngjyres">
-                    <input id="fatura-detail-color" type="text" value={colorTypeDisplay} disabled list="color-type-options" />
-                  </td>
-                  <td data-label="Sasia">
-                    <input id="fatura-detail-amount" type="text" value={amountDisplay} disabled />
-                  </td>
-                  <td data-label="Njesia">
-                    <select id="fatura-detail-unit" value={unitDisplay} disabled>
-                      <option value="m">m</option>
-                      <option value="m2">m2</option>
-                      <option value="cope">cope</option>
-                    </select>
-                  </td>
-                  <td data-label="Cmimi">
-                    <input
-                      id="fatura-detail-price"
-                      type="text"
-                      inputMode="decimal"
-                      value={unitPriceDisplay}
-                      disabled
-                      list="price-options"
-                    />
-                  </td>
-                  <td data-label="Totali">
-                    <span className="table-total-value">{formatCurrency(total)}</span>
-                  </td>
-                  <td data-label="Veprime" className="table-cell-actions">
-                    <button type="button" className="table-action-button" disabled>
-                      Pamje vetem leximi
-                    </button>
-                  </td>
-                </tr>
+                {itemsToDisplay.map((item) => {
+                  const lineTotal = item.quantity * item.unitPrice
+                  return (
+                    <tr key={item.id}>
+                      <td data-label="Pershkrimi">
+                        <input id={`fatura-detail-description-${item.id}`} type="text" value={item.description} disabled />
+                      </td>
+                      <td data-label="Lloji i ngjyres">
+                        <input
+                          id={`fatura-detail-color-${item.id}`}
+                          type="text"
+                          value={item.colorType}
+                          disabled
+                          list="color-type-options"
+                        />
+                      </td>
+                      <td data-label="Sasia">
+                        <input
+                          id={`fatura-detail-amount-${item.id}`}
+                          type="text"
+                          inputMode="decimal"
+                          value={String(item.quantity)}
+                          disabled
+                        />
+                      </td>
+                      <td data-label="Njesia">
+                        <select id={`fatura-detail-unit-${item.id}`} value={item.unit} disabled>
+                          <option value="m">m</option>
+                          <option value="m2">m2</option>
+                          <option value="cope">cope</option>
+                        </select>
+                      </td>
+                      <td data-label="Cmimi">
+                        <input
+                          id={`fatura-detail-price-${item.id}`}
+                          type="text"
+                          inputMode="decimal"
+                          value={String(item.unitPrice)}
+                          disabled
+                          list="price-options"
+                        />
+                      </td>
+                      <td data-label="Totali">
+                        <span className="table-total-value">{formatCurrency(lineTotal)}</span>
+                      </td>
+                      <td data-label="Veprime" className="table-cell-actions">
+                        <button type="button" className="table-action-button" disabled>
+                          Pamje vetem leximi
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
               <tfoot>
                 <tr>

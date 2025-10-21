@@ -1,5 +1,7 @@
 export type ClientStatus = "I barazuar" | "Detyrime nga ne" | "Detyrime nga klienti"
 
+export type FaturaUnit = "m" | "m2" | "cope"
+
 export type Client = {
   id: string
   name: string
@@ -17,6 +19,16 @@ export type Fatura = {
   quantity: number
   unitPrice: number
   paid: boolean
+}
+
+export type FaturaLineItem = {
+  id: string
+  faturaId: string
+  description: string
+  colorType: string
+  quantity: number
+  unit: FaturaUnit
+  unitPrice: number
 }
 
 export const clients: Client[] = [
@@ -86,14 +98,89 @@ export const faturas: Fatura[] = [
   },
 ]
 
+export const faturaLineItems: FaturaLineItem[] = [
+  {
+    id: "FAT-001-line-1",
+    faturaId: "FAT-001",
+    description: "Mbajtje mujore e platformes",
+    colorType: "CMYK",
+    quantity: 1,
+    unit: "cope",
+    unitPrice: 220,
+  },
+  {
+    id: "FAT-002-line-1",
+    faturaId: "FAT-002",
+    description: "Upgrade POS premium",
+    colorType: "Pantone",
+    quantity: 3,
+    unit: "cope",
+    unitPrice: 145,
+  },
+  {
+    id: "FAT-002-line-2",
+    faturaId: "FAT-002",
+    description: "Brending material promocional",
+    colorType: "CMYK",
+    quantity: 12,
+    unit: "m2",
+    unitPrice: 18.5,
+  },
+  {
+    id: "FAT-002-line-3",
+    faturaId: "FAT-002",
+    description: "Konsulence per konfigurim",
+    colorType: "-",
+    quantity: 4,
+    unit: "cope",
+    unitPrice: 75,
+  },
+  {
+    id: "FAT-003-line-1",
+    faturaId: "FAT-003",
+    description: "Integrim magazinimi",
+    colorType: "RAL",
+    quantity: 1,
+    unit: "cope",
+    unitPrice: 420,
+  },
+  {
+    id: "FAT-003-line-2",
+    faturaId: "FAT-003",
+    description: "Trajnim stafi",
+    colorType: "-",
+    quantity: 6,
+    unit: "cope",
+    unitPrice: 45,
+  },
+  {
+    id: "FAT-004-line-1",
+    faturaId: "FAT-004",
+    description: "Audit i rrjetit",
+    colorType: "RGB",
+    quantity: 1,
+    unit: "cope",
+    unitPrice: 480,
+  },
+]
+
 export const getClientById = (clientId: string): Client | undefined =>
   clients.find((client) => client.id === clientId)
 
 export const getFaturasByClient = (clientId: string): Fatura[] =>
   faturas.filter((fatura) => fatura.clientId === clientId)
 
-export const calculateFaturaTotal = (fatura: Fatura): number =>
-  Number((fatura.quantity * fatura.unitPrice).toFixed(2))
+export const getFaturaLineItems = (faturaId: string): FaturaLineItem[] =>
+  faturaLineItems.filter((item) => item.faturaId === faturaId)
+
+export const calculateFaturaTotal = (fatura: Fatura, lineItems?: FaturaLineItem[]): number => {
+  const items = lineItems ?? getFaturaLineItems(fatura.id)
+  if (items.length > 0) {
+    const total = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
+    return Number(total.toFixed(2))
+  }
+  return Number((fatura.quantity * fatura.unitPrice).toFixed(2))
+}
 
 export const formatCurrency = (value: number): string =>
   new Intl.NumberFormat(undefined, {
