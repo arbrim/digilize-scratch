@@ -30,6 +30,7 @@ type FaturaCreatePageProps = {
 
 const todayISO = new Date().toISOString().slice(0, 10)
 const colorTypeOptions = ["CMYK", "Pantone", "RGB", "RAL", "Metallic"]
+const priceOptions = Array.from({ length: 16 }, (_, index) => (15 + index).toString())
 
 const createLineId = () => `line-${Math.random().toString(36).slice(2, 9)}-${Date.now()}`
 
@@ -39,7 +40,7 @@ const createEmptyLine = (): FaturaLine => ({
   colorType: "",
   amount: "1",
   unit: "m",
-  price: "0",
+  price: "",
 })
 
 const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) => {
@@ -288,11 +289,12 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
                           <input
                             id={`fatura-price-${item.id}`}
                             name="price"
-                            type="number"
-                            min="0"
-                            step="0.01"
+                            type="text"
+                            inputMode="decimal"
                             value={item.price}
                             onChange={(event) => handleLineChange(index, "price", event.target.value)}
+                            placeholder="Zgjidh ose shkruaj"
+                            list="price-options"
                             required
                           />
                         </td>
@@ -328,6 +330,11 @@ const FaturaCreatePage: FC<FaturaCreatePageProps> = ({ clients, onBackToList }) 
             </div>
             <datalist id="color-type-options">
               {colorTypeOptions.map((option) => (
+                <option key={option} value={option} />
+              ))}
+            </datalist>
+            <datalist id="price-options">
+              {priceOptions.map((option) => (
                 <option key={option} value={option} />
               ))}
             </datalist>
