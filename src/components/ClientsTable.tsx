@@ -1,10 +1,16 @@
-﻿import type { FC } from "react"
-import type { Client } from "../data/sampleData"
+import type { FC } from "react"
+import type { Client, ClientStatus } from "../data/sampleData"
 
 type ClientsTableProps = {
   clients: Client[]
   onSelect: (clientId: string) => void
   selectedClientId?: string | null
+}
+
+const statusBadgeVariant: Record<ClientStatus, string> = {
+  "I barazuar": "success",
+  "Detyrime nga ne": "warning",
+  "Detyrime nga klienti": "danger",
 }
 
 const ClientsTable: FC<ClientsTableProps> = ({ clients, onSelect, selectedClientId }) => {
@@ -25,6 +31,7 @@ const ClientsTable: FC<ClientsTableProps> = ({ clients, onSelect, selectedClient
             <tbody>
               {clients.map((client) => {
                 const isSelected = selectedClientId === client.id
+                const badgeVariant = statusBadgeVariant[client.status]
                 return (
                   <tr
                     key={client.id}
@@ -35,17 +42,7 @@ const ClientsTable: FC<ClientsTableProps> = ({ clients, onSelect, selectedClient
                     <td data-label="Industria">{client.industry}</td>
                     <td data-label="Kontakti">{client.contact}</td>
                     <td data-label="Statusi">
-                      <span
-                        className={`badge badge-${
-                          client.status === "Active" ? "success" : client.status === "Pending" ? "warning" : "inactive"
-                        }`}
-                      >
-                        {client.status === "Active"
-                          ? "Aktiv"
-                          : client.status === "Pending"
-                            ? "Ne pritje"
-                            : "Jo aktiv"}
-                      </span>
+                      <span className={`badge badge-${badgeVariant}`}>{client.status}</span>
                     </td>
                   </tr>
                 )
@@ -57,6 +54,7 @@ const ClientsTable: FC<ClientsTableProps> = ({ clients, onSelect, selectedClient
       <div className="mobile-card-grid">
         {clients.map((client) => {
           const isSelected = selectedClientId === client.id
+          const badgeVariant = statusBadgeVariant[client.status]
           return (
             <button
               type="button"
@@ -69,17 +67,7 @@ const ClientsTable: FC<ClientsTableProps> = ({ clients, onSelect, selectedClient
                   <p className="table-card-title">{client.name}</p>
                   <p className="table-card-subtitle">{client.industry}</p>
                 </div>
-                <span
-                  className={`badge badge-${
-                    client.status === "Active" ? "success" : client.status === "Pending" ? "warning" : "inactive"
-                  }`}
-                >
-                  {client.status === "Active"
-                    ? "Aktiv"
-                    : client.status === "Pending"
-                      ? "Ne pritje"
-                      : "Jo aktiv"}
-                </span>
+                <span className={`badge badge-${badgeVariant}`}>{client.status}</span>
               </div>
               <div className="table-card-body">
                 <div className="table-card-row">

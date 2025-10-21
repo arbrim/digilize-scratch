@@ -10,7 +10,7 @@ type ClientFormState = {
   status: ClientStatus
 }
 
-const statusOptions: ClientStatus[] = ["Active", "Pending", "Inactive"]
+const statusOptions: ClientStatus[] = ["I barazuar", "Detyrime nga ne", "Detyrime nga klienti"]
 
 const ClientCreatePage: FC = () => {
   const navigate = useNavigate()
@@ -18,7 +18,7 @@ const ClientCreatePage: FC = () => {
     name: "",
     industry: "",
     contact: "",
-    status: "Active",
+    status: statusOptions[0],
   })
   const [submitted, setSubmitted] = useState(false)
 
@@ -106,7 +106,7 @@ const ClientCreatePage: FC = () => {
             <select id="client-status" name="status" value={formState.status} onChange={handleChange}>
               {statusOptions.map((status) => (
                 <option key={status} value={status}>
-                  {status === "Active" ? "Aktiv" : status === "Pending" ? "Ne pritje" : "Jo aktiv"}
+                  {status}
                 </option>
               ))}
             </select>

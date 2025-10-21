@@ -1,4 +1,4 @@
-export type ClientStatus = "Active" | "Pending" | "Inactive"
+export type ClientStatus = "I barazuar" | "Detyrime nga ne" | "Detyrime nga klienti"
 
 export type Client = {
   id: string
@@ -25,21 +25,21 @@ export const clients: Client[] = [
     name: "Alba Trade",
     industry: "Retail",
     contact: "alba@client.com",
-    status: "Active",
+    status: "I barazuar",
   },
   {
     id: "client-2",
     name: "Kosova Logistics",
     industry: "Logjistika",
     contact: "info@kosovalog.com",
-    status: "Pending",
+    status: "Detyrime nga ne",
   },
   {
     id: "client-3",
     name: "Dardan Tech",
     industry: "Teknologji",
     contact: "support@dardantech.io",
-    status: "Active",
+    status: "Detyrime nga klienti",
   },
 ]
 
