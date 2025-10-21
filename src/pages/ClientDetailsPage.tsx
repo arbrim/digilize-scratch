@@ -37,8 +37,14 @@ const ClientDetailsPage: FC<ClientDetailsPageProps> = ({ clients, faturas, onSel
   return (
     <div className="dashboard-section-stack">
       <div className="data-card">
-        <button type="button" className="link-button" onClick={() => navigate("/clients")}>
-          &lt;- Kthehu te klientet
+        <button type="button" className="back-button" onClick={() => navigate("/clients")}>
+          <span aria-hidden="true" className="back-button-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18L9 12L15 6" />
+              <path d="M10 12H20" />
+            </svg>
+          </span>
+          <span>Kthehu te klientet</span>
         </button>
       </div>
       <ClientFaturasCard client={client} faturas={clientFaturas} onSelectFatura={onSelectFatura} />
